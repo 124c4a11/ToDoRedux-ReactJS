@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { addTask, removeTask } from '../../actions';
+import { addTask, removeTask, completeTask } from '../../actions';
 
 import TodoInput from '../../components/TodoInput';
 import TodoList from '../../components/TodoList';
@@ -34,7 +34,7 @@ class Todo extends Component {
 
   render() {
     const { taskText, activeFilter } = this.state;
-    const { tasks, removeTask } = this.props;
+    const { tasks, removeTask, completeTask } = this.props;
     const isTasksExist = tasks && tasks.length > 0;
 
     return (
@@ -44,7 +44,11 @@ class Todo extends Component {
           onChange={this.onInputChange}
           onKeyPress={this.addTask}
         />
-        {isTasksExist && <TodoList tasksList={tasks} removeTask={removeTask} />}
+        {isTasksExist && <TodoList
+          tasksList={tasks}
+          removeTask={removeTask}
+          completeTask={completeTask}
+        />}
         {isTasksExist && <Footer amount={tasks.length} activeFilter={activeFilter} />}
       </div>
     );
@@ -54,4 +58,4 @@ class Todo extends Component {
 
 export default connect((state) => ({
   tasks: state.tasks
-}), { addTask, removeTask })(Todo);
+}), { addTask, removeTask, completeTask })(Todo);

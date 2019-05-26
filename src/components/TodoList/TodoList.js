@@ -6,7 +6,7 @@ import TodoItem from '../TodoItem';
 import './TodoList.css';
 
 
-const ToDoList = ({ tasksList, removeTask }) => (
+const ToDoList = ({ tasksList, removeTask, completeTask }) => (
   <ul className="todo-list">
     {tasksList.map(({ id, text, isCompleted }) => (
       <TodoItem
@@ -14,6 +14,7 @@ const ToDoList = ({ tasksList, removeTask }) => (
         id={id}
         text={text}
         removeTask={removeTask}
+        completeTask={completeTask}
         isCompleted={isCompleted}
       />
     ))}
@@ -23,13 +24,15 @@ const ToDoList = ({ tasksList, removeTask }) => (
 
 ToDoList.propTypes = {
   tasksList: PropTypes.array,
-  removeTask: PropTypes.func
+  removeTask: PropTypes.func,
+  completeTask: PropTypes.func
 }
 
 
 ToDoList.defaultProps = {
   tasksList: [],
-  removeTask: () => {}
+  removeTask: () => {},
+  completeTask: () => {}
 }
 
 
