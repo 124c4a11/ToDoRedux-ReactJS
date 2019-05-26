@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { addTask, removeTask, completeTask } from '../../actions';
+import {
+  addTask,
+  removeTask,
+  completeTask,
+  changeFilter
+} from '../../actions';
 
 import TodoInput from '../../components/TodoInput';
 import TodoList from '../../components/TodoList';
@@ -12,8 +17,7 @@ import './Todo.css';
 
 class Todo extends Component {
   state = {
-    taskText: '',
-    activeFilter: 'all'
+    taskText: ''
   }
 
   onInputChange = ({ target: { value }}) => {
@@ -32,10 +36,28 @@ class Todo extends Component {
     }
   };
 
+  filterTasks = (tasks, activeFilter) => {
+    switch(activeFilter) {
+      case 'active':
+        return tasks.filter((task) => !task.isCompleted);
+
+      case 'completed':
+        return tasks.filter((task) => task.isCompleted);
+
+      default:
+        return tasks;
+    }
+  };
+
+  getActiveTasksAmount = (tasks) => {
+    return tasks.filter((task) => !task.isCompleted).length;
+  };
+
   render() {
-    const { taskText, activeFilter } = this.state;
-    const { tasks, removeTask, completeTask } = this.props;
+    const { taskText } = this.state;
+    const { tasks, filter, removeTask, completeTask, changeFilter} = this.props;
     const isTasksExist = tasks && tasks.length > 0;
+    const filteredTasks = this.filterTasks(tasks, filter);
 
     return (
       <div className="todo-wrapper">
@@ -45,17 +67,25 @@ class Todo extends Component {
           onKeyPress={this.addTask}
         />
         {isTasksExist && <TodoList
-          tasksList={tasks}
+          tasksList={filteredTasks}
           removeTask={removeTask}
           completeTask={completeTask}
         />}
-        {isTasksExist && <Footer amount={tasks.length} activeFilter={activeFilter} />}
+        {isTasksExist && <Footer
+          amount={this.getActiveTasksAmount(tasks)}
+          activeFilter={filter}
+          changeFilter={changeFilter}
+        />}
       </div>
     );
   }
 }
 
 
-export default connect((state) => ({
-  tasks: state.tasks
-}), { addTask, removeTask, completeTask })(Todo);
+export default connect(
+  ({ tasks, filter }) => ({
+    tasks,
+    filter
+  }),
+  { addTask, removeTask, completeTask, changeFilter }
+)(Todo);
